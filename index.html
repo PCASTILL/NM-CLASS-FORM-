@@ -370,10 +370,7 @@
           <input type="text" id="email" placeholder="e.g. jsmith@nm.org" />
           <p class="field-hint">Use your Northwestern Medicine email address.</p>
         </div>
-        <div class="field-group">
-          <label>Department / Program <span class="req">*</span></label>
-          <input type="text" id="department" placeholder="e.g. Cardiology, Women's Health" />
-        </div>
+
         <div class="field-group">
           <label>Location / Campus</label>
           <select id="location">
@@ -546,9 +543,9 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwcJYe_Cqg-9pl4DvZpr
 
 // ── DATA ────────────────────────────────────────────────────────────────────
 const CATEGORIES = ["Continuing Medical Education","Expectant Parents","Fitness","Joint Health","Neurogenerative Disease"];
-const SUBCATS = ["Birth","Breastfeeding","Fatherhood","Grandparents","Newborn","Safety","Siblings","Support Group"];
+const SUBCATS    = ["Birth","Breastfeeding","Fatherhood","Grandparents","Newborn","Safety","Siblings","Support Group"];
 const ACTIVITIES = ["Class","Event","Support Group","Conference","Housing Application"];
-const FORMATS = ["In-Person","On-Demand","Virtual"];
+const FORMATS    = ["In-Person","On-Demand","Virtual"];
 
 let rowId = 0;
 
@@ -639,11 +636,11 @@ function getRows() {
     const id = tr.dataset.rid;
     return {
       id,
-      name: document.getElementById(`n${id}`).value.trim(),
+      name:     document.getElementById(`n${id}`).value.trim(),
       category: document.getElementById(`c${id}`).value,
-      subcat: document.getElementById(`s${id}`).value,
+      subcat:   document.getElementById(`s${id}`).value,
       activity: document.getElementById(`a${id}`).value,
-      format: document.getElementById(`f${id}`).value,
+      format:   document.getElementById(`f${id}`).value,
     };
   });
 }
@@ -657,10 +654,10 @@ function validatePage2() {
     return false;
   }
   rows.forEach(r => {
-    if (!r.name) { document.getElementById(`n${r.id}`).classList.add('invalid'); ok=false; }
+    if (!r.name)     { document.getElementById(`n${r.id}`).classList.add('invalid'); ok=false; }
     if (!r.category) { document.getElementById(`c${r.id}`).classList.add('invalid'); ok=false; }
     if (!r.activity) { document.getElementById(`a${r.id}`).classList.add('invalid'); ok=false; }
-    if (!r.format) { document.getElementById(`f${r.id}`).classList.add('invalid'); ok=false; }
+    if (!r.format)   { document.getElementById(`f${r.id}`).classList.add('invalid'); ok=false; }
   });
   document.getElementById('err2').classList.toggle('show', !ok);
   return ok;
@@ -672,7 +669,7 @@ function buildReview() {
   coord.innerHTML = `
     <div class="review-row"><span class="review-label">Name</span><span class="review-val">${document.getElementById('firstName').value} ${document.getElementById('lastName').value}</span></div>
     <div class="review-row"><span class="review-label">Email</span><span class="review-val">${document.getElementById('email').value}</span></div>
-    <div class="review-row"><span class="review-label">Department</span><span class="review-val">${document.getElementById('department').value}</span></div>
+
     <div class="review-row"><span class="review-label">Location</span><span class="review-val">${document.getElementById('location').value || '—'}</span></div>
   `;
 
@@ -694,18 +691,18 @@ async function submitForm() {
 
   const payload = {
     coordinator: {
-      firstName: document.getElementById('firstName').value.trim(),
-      lastName: document.getElementById('lastName').value.trim(),
-      email: document.getElementById('email').value.trim(),
-      department: document.getElementById('department').value.trim(),
-      location: document.getElementById('location').value,
+      firstName:  document.getElementById('firstName').value.trim(),
+      lastName:   document.getElementById('lastName').value.trim(),
+      email:      document.getElementById('email').value.trim(),
+
+      location:   document.getElementById('location').value,
     },
     classes: getRows().map(r => ({
-      name: r.name,
+      name:     r.name,
       category: r.category,
-      subcat: r.subcat,
+      subcat:   r.subcat,
       activity: r.activity,
-      format: r.format,
+      format:   r.format,
     })),
     submittedAt: new Date().toISOString()
   };
@@ -726,4 +723,4 @@ async function submitForm() {
 }
 </script>
 </body>
-</html>
+</html> 
