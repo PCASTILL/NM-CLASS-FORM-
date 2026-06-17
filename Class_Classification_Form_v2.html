@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NM Class Classification Form</title>
+<style>
+  :root {
+    --purple: #4E2A84;
+    --purple-light: #6B3FA0;
+    --purple-pale: #F3EFFA;
+    --border: #D8D0E8;
+    --text: #1A1A1A;
+    --muted: #6B6B6B;
+    --error: #C62828;
+    --success: #2E7D32;
+    --row-alt: #FAF8FF;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #EFEFEF;
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 60px;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--purple);
+    color: white;
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .nm-logo {
+    font-size: 20px;
+    font-weight: 800;
+    border: 2.5px solid white;
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 4px; flex-shrink: 0;
+  }
+  .header h1 { font-size: 16px; font-weight: 700; }
+  .header p { font-size: 11.5px; opacity: 0.75; margin-top: 2px; }
+
+  /* PROGRESS */
+  .progress-bar-wrap {
+    background: white;
+    border-bottom: 1px solid #E0E0E0;
+    padding: 0 32px;
+  }
+  .progress-steps {
+    display: flex;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .step {
+    flex: 1;
+    text-align: center;
+    padding: 14px 8px;
+    font-size: 12px;
+    color: var(--muted);
+    border-bottom: 3px solid transparent;
+    font-weight: 600;
+    position: relative;
+    cursor: default;
+  }
+  .step.active { color: var(--purple); border-bottom-color: var(--purple); }
+  .step.done { color: var(--success); border-bottom-color: var(--success); }
+  .step-num {
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    font-size: 11px;
+    margin-right: 6px;
+    font-weight: 700;
+  }
+
+  /* PAGES */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .inner { max-width: 820px; margin: 0 auto; padding: 28px 16px; }
+
+  /* CARDS */
+  .card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .card-header {
+    background: var(--purple);
+    color: white;
+    padding: 13px 22px;
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-body { padding: 22px; }
+
+  /* INTRO */
+  .intro-text {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+  .intro-text strong { color: var(--text); }
+
+  /* DEF PILLS */
+  .def-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .def-pill {
+    background: var(--purple-pale);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .def-pill h4 {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--purple);
+    margin-bottom: 5px;
+  }
+  .def-pill p { font-size: 12px; color: var(--muted); line-height: 1.5; margin-bottom: 6px; }
+  .def-pill ul { list-style: none; }
+  .def-pill ul li { font-size: 12px; color: var(--text); padding: 1.5px 0; }
+  .def-pill ul li::before { content: "› "; color: var(--purple); font-weight: bold; }
+
+  /* COORDINATOR INFO */
+  .field-group { margin-bottom: 18px; }
+  .field-group label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+  .field-group label .req { color: var(--error); margin-left: 2px; }
+  .field-group input, .field-group select {
+    width: 100%;
+    border: 1.5px solid #CCCCCC;
+    border-radius: 6px;
+    padding: 9px 12px;
+    font-size: 13.5px;
+    color: var(--text);
+    font-family: inherit;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .field-group input:focus, .field-group select:focus {
+    outline: none;
+    border-color: var(--purple);
+    box-shadow: 0 0 0 3px rgba(78,42,132,0.1);
+  }
+  .field-group input.invalid, .field-group select.invalid {
+    border-color: var(--error);
+    background: #FFF5F5;
+  }
+  .field-hint { font-size: 11.5px; color: var(--muted); margin-top: 4px; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* CLASS TABLE */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 640px; }
+  thead th {
+    background: #EDE8F5;
+    color: var(--purple);
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+  }
+  thead th.req::after { content: " *"; color: var(--error); }
+  tbody tr { border-bottom: 1px solid #EEEEEE; }
+  tbody tr:nth-child(even) { background: var(--row-alt); }
+  tbody tr:hover { background: #EDE8F5; }
+  tbody td { padding: 7px 8px; vertical-align: middle; }
+  .row-num { color: var(--muted); font-size: 12px; font-weight: 700; text-align: center; width: 36px; }
+
+  tbody input[type="text"], tbody select {
+    width: 100%;
+    border: 1px solid #CCCCCC;
+    border-radius: 5px;
+    padding: 6px 9px;
+    font-size: 12.5px;
+    color: var(--text);
+    font-family: inherit;
+    background: white;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  tbody input[type="text"]:focus, tbody select:focus {
+    outline: none;
+    border-color: var(--purple);
+    box-shadow: 0 0 0 2px rgba(78,42,132,0.1);
+  }
+  tbody input.invalid, tbody select.invalid { border-color: var(--error); background: #FFF5F5; }
+  select:disabled { background: #F2F2F2; color: #BBBBBB; cursor: not-allowed; }
+
+  .del-btn {
+    background: none; border: none;
+    color: #CCC; cursor: pointer;
+    font-size: 18px; padding: 3px 7px;
+    border-radius: 4px; line-height: 1;
+    transition: color 0.15s, background 0.15s;
+  }
+  .del-btn:hover { color: var(--error); background: #FFEBEE; }
+
+  /* TABLE FOOTER */
+  .table-footer {
+    padding: 13px 18px;
+    border-top: 1px solid #EEE;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* REVIEW PAGE */
+  .review-section { margin-bottom: 20px; }
+  .review-section h3 { font-size: 14px; font-weight: 700; color: var(--purple); margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+  .review-row { display: flex; gap: 12px; margin-bottom: 8px; }
+  .review-label { font-size: 12px; color: var(--muted); width: 140px; flex-shrink: 0; font-weight: 600; }
+  .review-val { font-size: 13px; color: var(--text); }
+
+  .review-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .review-table th { background: #EDE8F5; color: var(--purple); font-size: 11px; text-transform: uppercase; padding: 8px 10px; text-align: left; }
+  .review-table td { padding: 8px 10px; border-bottom: 1px solid #EEE; }
+  .review-table tr:last-child td { border-bottom: none; }
+
+  /* BUTTONS */
+  .btn {
+    padding: 9px 22px;
+    border-radius: 7px;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .btn-primary { background: var(--purple); color: white; }
+  .btn-primary:hover { background: var(--purple-light); }
+  .btn-primary:disabled { background: #CCC; cursor: not-allowed; }
+  .btn-secondary { background: white; color: var(--purple); border: 1.5px solid var(--purple); }
+  .btn-secondary:hover { background: var(--purple-pale); }
+  .btn-ghost { background: white; color: var(--muted); border: 1.5px solid #CCC; }
+  .btn-ghost:hover { background: #F5F5F5; }
+
+  .nav-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0;
+    margin-top: 4px;
+  }
+  .nav-right { display: flex; gap: 10px; }
+
+  /* ERROR BANNER */
+  .err-banner {
+    background: #FFEBEE;
+    color: var(--error);
+    border: 1px solid #FFCDD2;
+    border-radius: 7px;
+    padding: 10px 16px;
+    font-size: 13px;
+    margin-bottom: 16px;
+    display: none;
+  }
+  .err-banner.show { display: block; }
+
+  /* SUCCESS PAGE */
+  .success-wrap {
+    text-align: center;
+    padding: 48px 24px;
+  }
+  .success-icon {
+    width: 72px; height: 72px;
+    background: #E8F5E9;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
+    margin: 0 auto 20px;
+  }
+  .success-wrap h2 { font-size: 22px; color: var(--success); margin-bottom: 10px; }
+  .success-wrap p { font-size: 14px; color: var(--muted); line-height: 1.7; max-width: 420px; margin: 0 auto; }
+
+  /* SPINNER */
+  .spinner {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 600px) {
+    .def-grid { grid-template-columns: 1fr; }
+    .two-col { grid-template-columns: 1fr; }
+    .header { padding: 12px 16px; }
+    .inner { padding: 16px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="nm-logo">NM</div>
+  <div>
+    <h1>Northwestern Medicine — Class Classification Form</h1>
+    <p>Classes, Events &amp; Support Groups Website Redesign</p>
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-bar-wrap">
+  <div class="progress-steps">
+    <div class="step active" id="step1"><span class="step-num">1</span>Your Info</div>
+    <div class="step" id="step2"><span class="step-num">2</span>Class Listing</div>
+    <div class="step" id="step3"><span class="step-num">3</span>Review &amp; Submit</div>
+  </div>
+</div>
+
+<!-- PAGE 1: COORDINATOR INFO -->
+<div class="page active" id="page1">
+  <div class="inner">
+    <div class="card">
+      <div class="card-header">Step 1 — Your Information</div>
+      <div class="card-body">
+        <p class="intro-text">
+          Before listing your classes, we need a few details so we know who submitted this form.
+          Fields marked <strong style="color:var(--error)">*</strong> are required.
+        </p>
+        <div class="err-banner" id="err1">⚠ Please complete all required fields before continuing.</div>
+        <div class="two-col">
+          <div class="field-group">
+            <label>First Name <span class="req">*</span></label>
+            <input type="text" id="firstName" placeholder="e.g. Jane" />
+          </div>
+          <div class="field-group">
+            <label>Last Name <span class="req">*</span></label>
+            <input type="text" id="lastName" placeholder="e.g. Smith" />
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Email Address <span class="req">*</span></label>
+          <input type="text" id="email" placeholder="e.g. jsmith@nm.org" />
+          <p class="field-hint">Use your Northwestern Medicine email address.</p>
+        </div>
+        <div class="field-group">
+          <label>Department / Program <span class="req">*</span></label>
+          <input type="text" id="department" placeholder="e.g. Cardiology, Women's Health" />
+        </div>
+        <div class="field-group">
+          <label>Location / Campus</label>
+          <select id="location">
+            <option value="">— Select your primary location —</option>
+            <option>Ann &amp; Robert H Lurie Children's Hospital of Chicago</option>
+            <option>Central DuPage Hospital</option>
+            <option>Delnor Hospital</option>
+            <option>Huntley Hospital</option>
+            <option>Kishwaukee Hospital</option>
+            <option>Lake Forest Hospital</option>
+            <option>Lavin Pavilion</option>
+            <option>Marianjoy Rehabilitation Hospital</option>
+            <option>McHenry Hospital</option>
+            <option>Endeavor Evanston Hospital</option>
+            <option>Northwestern Memorial Hospital</option>
+            <option>Palos Hospital</option>
+            <option>Prentice Women's Hospital</option>
+            <option>Northwestern Medicine Orthopaedics Warrenville</option>
+            <option>Northwestern Medicine Rehabilitation Crystal Lake</option>
+            <option>Multiple / System-Wide</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="nav-bar">
+      <div></div>
+      <div class="nav-right">
+        <button class="btn btn-primary" onclick="goToPage2()">Continue to Class Listing →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 2: CLASS LISTING -->
+<div class="page" id="page2">
+  <div class="inner">
+
+    <div class="def-grid">
+      <div class="def-pill">
+        <h4>Category</h4>
+        <p>Broad topic of the class. One per class.</p>
+        <ul>
+          <li>Continuing Medical Education</li>
+          <li>Expectant Parents</li>
+          <li>Fitness</li>
+          <li>Joint Health</li>
+          <li>Neurogenerative Disease</li>
+        </ul>
+      </div>
+      <div class="def-pill">
+        <h4>Activity</h4>
+        <p>Type of engagement offered. One per class.</p>
+        <ul>
+          <li>Class</li>
+          <li>Event</li>
+          <li>Support Group</li>
+          <li>Conference</li>
+          <li>Housing Application</li>
+        </ul>
+      </div>
+      <div class="def-pill">
+        <h4>Format</h4>
+        <p>How the class is delivered. One per class.</p>
+        <ul>
+          <li>In-Person – live at a location</li>
+          <li>On-Demand – pre-recorded, anytime</li>
+          <li>Virtual – live online</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span>Step 2 — Your Classes</span>
+        <span id="rowBadge" style="font-size:12px;background:rgba(255,255,255,0.2);border-radius:12px;padding:3px 12px;">0 classes</span>
+      </div>
+      <div class="err-banner" id="err2" style="margin:16px 18px 0;">⚠ Please fill in all required fields for each class row.</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th class="req">Class Name</th>
+              <th class="req">Category</th>
+              <th>Sub-Category <small style="font-weight:400;text-transform:none;font-size:10px;">(Expectant Parents only)</small></th>
+              <th class="req">Activity</th>
+              <th class="req">Format</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+      <div class="table-footer">
+        <button class="btn btn-secondary" onclick="addRow()">+ Add Class</button>
+      </div>
+    </div>
+
+    <div class="nav-bar">
+      <button class="btn btn-ghost" onclick="goTo(1)">← Back</button>
+      <div class="nav-right">
+        <button class="btn btn-primary" onclick="goToPage3()">Review Submission →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 3: REVIEW & SUBMIT -->
+<div class="page" id="page3">
+  <div class="inner">
+    <div class="card">
+      <div class="card-header">Step 3 — Review &amp; Submit</div>
+      <div class="card-body">
+        <div class="err-banner" id="err3">⚠ Submission failed. Please try again or contact Pcastill@nm.org.</div>
+        <div class="review-section">
+          <h3>Your Information</h3>
+          <div id="reviewCoord"></div>
+        </div>
+        <div class="review-section">
+          <h3>Class Listing</h3>
+          <div class="table-wrap">
+            <table class="review-table" id="reviewTable">
+              <thead>
+                <tr>
+                  <th>#</th><th>Class Name</th><th>Category</th>
+                  <th>Sub-Category</th><th>Activity</th><th>Format</th>
+                </tr>
+              </thead>
+              <tbody id="reviewBody"></tbody>
+            </table>
+          </div>
+        </div>
+        <p style="font-size:12.5px;color:var(--muted);margin-top:16px;">
+          By clicking Submit, your class classifications will be sent directly to the Physician Referral team for processing.
+        </p>
+      </div>
+    </div>
+    <div class="nav-bar">
+      <button class="btn btn-ghost" onclick="goTo(2)">← Edit Classes</button>
+      <div class="nav-right">
+        <button class="btn btn-primary" id="submitBtn" onclick="submitForm()">Submit Classification</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 4: SUCCESS -->
+<div class="page" id="page4">
+  <div class="inner">
+    <div class="card">
+      <div class="card-body">
+        <div class="success-wrap">
+          <div class="success-icon">✓</div>
+          <h2>Submission Received!</h2>
+          <p>
+            Thank you — your class classifications have been submitted successfully.<br><br>
+            The Physician Referral team will review your entries and reach out if any clarification is needed.
+            Questions? Contact <strong>Pcastill@nm.org</strong>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ──────────────────────────────────────────────────────────────────
+// Paste your Google Apps Script Web App URL here after setup:
+const SCRIPT_URL = https://script.google.com/macros/s/AKfycbwcJYe_Cqg-9pl4DvZprC1cg2GVNFcPsTqLZ27xmDacRntHW2rvSVvuQT_Q5RVJzf4d/exec
+
+
+// ── DATA ────────────────────────────────────────────────────────────────────
+const CATEGORIES = ["Continuing Medical Education","Expectant Parents","Fitness","Joint Health","Neurogenerative Disease"];
+const SUBCATS    = ["Birth","Breastfeeding","Fatherhood","Grandparents","Newborn","Safety","Siblings","Support Group"];
+const ACTIVITIES = ["Class","Event","Support Group","Conference","Housing Application"];
+const FORMATS    = ["In-Person","On-Demand","Virtual"];
+
+let rowId = 0;
+
+// ── NAVIGATION ───────────────────────────────────────────────────────────────
+function goTo(n) {
+  document.querySelectorAll('.page').forEach((p,i) => p.classList.toggle('active', i+1 === n));
+  ['step1','step2','step3'].forEach((id,i) => {
+    const el = document.getElementById(id);
+    el.className = 'step' + (i+1 === n ? ' active' : i+1 < n ? ' done' : '');
+  });
+  window.scrollTo(0,0);
+}
+
+function goToPage2() {
+  if (!validatePage1()) return;
+  if (document.querySelectorAll('#tableBody tr').length === 0) { addRow(); addRow(); addRow(); }
+  goTo(2);
+}
+
+function goToPage3() {
+  if (!validatePage2()) return;
+  buildReview();
+  goTo(3);
+}
+
+// ── PAGE 1 VALIDATION ────────────────────────────────────────────────────────
+function validatePage1() {
+  let ok = true;
+  ['firstName','lastName','email','department'].forEach(id => {
+    const el = document.getElementById(id);
+    const empty = !el.value.trim();
+    el.classList.toggle('invalid', empty);
+    if (empty) ok = false;
+  });
+  document.getElementById('err1').classList.toggle('show', !ok);
+  return ok;
+}
+
+// ── PAGE 2: TABLE ────────────────────────────────────────────────────────────
+function addRow() {
+  rowId++;
+  const id = rowId;
+  const tbody = document.getElementById('tableBody');
+  const tr = document.createElement('tr');
+  tr.id = `r${id}`;
+  tr.dataset.rid = id;
+
+  const catOpts = CATEGORIES.map(c => `<option value="${c}">${c}</option>`).join('');
+  const subOpts = SUBCATS.map(s => `<option value="${s}">${s}</option>`).join('');
+  const actOpts = ACTIVITIES.map(a => `<option value="${a}">${a}</option>`).join('');
+  const fmtOpts = FORMATS.map(f => `<option value="${f}">${f}</option>`).join('');
+
+  tr.innerHTML = `
+    <td class="row-num">${tbody.children.length + 1}</td>
+    <td><input type="text" id="n${id}" placeholder="Class name" /></td>
+    <td><select id="c${id}" onchange="onCat(${id})"><option value="">— Select —</option>${catOpts}</select></td>
+    <td><select id="s${id}" disabled><option value="">N/A</option>${subOpts}</select></td>
+    <td><select id="a${id}"><option value="">— Select —</option>${actOpts}</select></td>
+    <td><select id="f${id}"><option value="">— Select —</option>${fmtOpts}</select></td>
+    <td><button class="del-btn" onclick="delRow(${id})" title="Remove">×</button></td>
+  `;
+  tbody.appendChild(tr);
+  updateBadge();
+  document.getElementById(`n${id}`).focus();
+}
+
+function onCat(id) {
+  const cat = document.getElementById(`c${id}`).value;
+  const sub = document.getElementById(`s${id}`);
+  const isExp = cat === "Expectant Parents";
+  sub.disabled = !isExp;
+  sub.value = "";
+  sub.options[0].text = isExp ? "— Select —" : "N/A";
+}
+
+function delRow(id) {
+  const row = document.getElementById(`r${id}`);
+  if (row) row.remove();
+  renumber();
+  updateBadge();
+}
+
+function renumber() {
+  document.querySelectorAll('#tableBody tr').forEach((tr, i) => {
+    tr.querySelector('.row-num').textContent = i + 1;
+  });
+}
+
+function updateBadge() {
+  const n = document.querySelectorAll('#tableBody tr').length;
+  document.getElementById('rowBadge').textContent = `${n} class${n===1?'':'es'}`;
+}
+
+function getRows() {
+  return Array.from(document.querySelectorAll('#tableBody tr')).map(tr => {
+    const id = tr.dataset.rid;
+    return {
+      id,
+      name:     document.getElementById(`n${id}`).value.trim(),
+      category: document.getElementById(`c${id}`).value,
+      subcat:   document.getElementById(`s${id}`).value,
+      activity: document.getElementById(`a${id}`).value,
+      format:   document.getElementById(`f${id}`).value,
+    };
+  });
+}
+
+function validatePage2() {
+  document.querySelectorAll('#tableBody .invalid').forEach(el => el.classList.remove('invalid'));
+  const rows = getRows();
+  let ok = true;
+  if (rows.length === 0) {
+    document.getElementById('err2').classList.add('show');
+    return false;
+  }
+  rows.forEach(r => {
+    if (!r.name)     { document.getElementById(`n${r.id}`).classList.add('invalid'); ok=false; }
+    if (!r.category) { document.getElementById(`c${r.id}`).classList.add('invalid'); ok=false; }
+    if (!r.activity) { document.getElementById(`a${r.id}`).classList.add('invalid'); ok=false; }
+    if (!r.format)   { document.getElementById(`f${r.id}`).classList.add('invalid'); ok=false; }
+  });
+  document.getElementById('err2').classList.toggle('show', !ok);
+  return ok;
+}
+
+// ── REVIEW ───────────────────────────────────────────────────────────────────
+function buildReview() {
+  const coord = document.getElementById('reviewCoord');
+  coord.innerHTML = `
+    <div class="review-row"><span class="review-label">Name</span><span class="review-val">${document.getElementById('firstName').value} ${document.getElementById('lastName').value}</span></div>
+    <div class="review-row"><span class="review-label">Email</span><span class="review-val">${document.getElementById('email').value}</span></div>
+    <div class="review-row"><span class="review-label">Department</span><span class="review-val">${document.getElementById('department').value}</span></div>
+    <div class="review-row"><span class="review-label">Location</span><span class="review-val">${document.getElementById('location').value || '—'}</span></div>
+  `;
+
+  const tbody = document.getElementById('reviewBody');
+  tbody.innerHTML = '';
+  getRows().forEach((r, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${i+1}</td><td>${r.name}</td><td>${r.category}</td><td>${r.subcat||'—'}</td><td>${r.activity}</td><td>${r.format}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+// ── SUBMIT ───────────────────────────────────────────────────────────────────
+async function submitForm() {
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Submitting…';
+  document.getElementById('err3').classList.remove('show');
+
+  const payload = {
+    coordinator: {
+      firstName:  document.getElementById('firstName').value.trim(),
+      lastName:   document.getElementById('lastName').value.trim(),
+      email:      document.getElementById('email').value.trim(),
+      department: document.getElementById('department').value.trim(),
+      location:   document.getElementById('location').value,
+    },
+    classes: getRows().map(r => ({
+      name:     r.name,
+      category: r.category,
+      subcat:   r.subcat,
+      activity: r.activity,
+      format:   r.format,
+    })),
+    submittedAt: new Date().toISOString()
+  };
+
+  try {
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    goTo(4);
+  } catch(e) {
+    document.getElementById('err3').classList.add('show');
+    btn.disabled = false;
+    btn.innerHTML = 'Submit Classification';
+  }
+}
+</script>
+</body>
+</html>
