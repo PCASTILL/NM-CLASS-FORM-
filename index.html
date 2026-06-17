@@ -542,14 +542,13 @@
 <script>
 // ── CONFIG ──────────────────────────────────────────────────────────────────
 // Paste your Google Apps Script Web App URL here after setup:
-const SCRIPT_URL = https://script.google.com/macros/s/AKfycbwcJYe_Cqg-9pl4DvZprC1cg2GVNFcPsTqLZ27xmDacRntHW2rvSVvuQT_Q5RVJzf4d/exec
-
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwcJYe_Cqg-9pl4DvZprC1cg2GVNFcPsTqLZ27xmDacRntHW2rvSVvuQT_Q5RVJzf4d/exec";
 
 // ── DATA ────────────────────────────────────────────────────────────────────
 const CATEGORIES = ["Continuing Medical Education","Expectant Parents","Fitness","Joint Health","Neurogenerative Disease"];
-const SUBCATS    = ["Birth","Breastfeeding","Fatherhood","Grandparents","Newborn","Safety","Siblings","Support Group"];
+const SUBCATS = ["Birth","Breastfeeding","Fatherhood","Grandparents","Newborn","Safety","Siblings","Support Group"];
 const ACTIVITIES = ["Class","Event","Support Group","Conference","Housing Application"];
-const FORMATS    = ["In-Person","On-Demand","Virtual"];
+const FORMATS = ["In-Person","On-Demand","Virtual"];
 
 let rowId = 0;
 
@@ -577,15 +576,7 @@ function goToPage3() {
 
 // ── PAGE 1 VALIDATION ────────────────────────────────────────────────────────
 function validatePage1() {
-  let ok = true;
-  ['firstName','lastName','email','department'].forEach(id => {
-    const el = document.getElementById(id);
-    const empty = !el.value.trim();
-    el.classList.toggle('invalid', empty);
-    if (empty) ok = false;
-  });
-  document.getElementById('err1').classList.toggle('show', !ok);
-  return ok;
+  return true;
 }
 
 // ── PAGE 2: TABLE ────────────────────────────────────────────────────────────
@@ -648,11 +639,11 @@ function getRows() {
     const id = tr.dataset.rid;
     return {
       id,
-      name:     document.getElementById(`n${id}`).value.trim(),
+      name: document.getElementById(`n${id}`).value.trim(),
       category: document.getElementById(`c${id}`).value,
-      subcat:   document.getElementById(`s${id}`).value,
+      subcat: document.getElementById(`s${id}`).value,
       activity: document.getElementById(`a${id}`).value,
-      format:   document.getElementById(`f${id}`).value,
+      format: document.getElementById(`f${id}`).value,
     };
   });
 }
@@ -666,10 +657,10 @@ function validatePage2() {
     return false;
   }
   rows.forEach(r => {
-    if (!r.name)     { document.getElementById(`n${r.id}`).classList.add('invalid'); ok=false; }
+    if (!r.name) { document.getElementById(`n${r.id}`).classList.add('invalid'); ok=false; }
     if (!r.category) { document.getElementById(`c${r.id}`).classList.add('invalid'); ok=false; }
     if (!r.activity) { document.getElementById(`a${r.id}`).classList.add('invalid'); ok=false; }
-    if (!r.format)   { document.getElementById(`f${r.id}`).classList.add('invalid'); ok=false; }
+    if (!r.format) { document.getElementById(`f${r.id}`).classList.add('invalid'); ok=false; }
   });
   document.getElementById('err2').classList.toggle('show', !ok);
   return ok;
@@ -703,18 +694,18 @@ async function submitForm() {
 
   const payload = {
     coordinator: {
-      firstName:  document.getElementById('firstName').value.trim(),
-      lastName:   document.getElementById('lastName').value.trim(),
-      email:      document.getElementById('email').value.trim(),
+      firstName: document.getElementById('firstName').value.trim(),
+      lastName: document.getElementById('lastName').value.trim(),
+      email: document.getElementById('email').value.trim(),
       department: document.getElementById('department').value.trim(),
-      location:   document.getElementById('location').value,
+      location: document.getElementById('location').value,
     },
     classes: getRows().map(r => ({
-      name:     r.name,
+      name: r.name,
       category: r.category,
-      subcat:   r.subcat,
+      subcat: r.subcat,
       activity: r.activity,
-      format:   r.format,
+      format: r.format,
     })),
     submittedAt: new Date().toISOString()
   };
